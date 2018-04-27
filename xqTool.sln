@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xqTool", "xqTool\xqTool.csproj", "{D4C7D6C2-BD23-4D91-9243-04BB48B9666A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xqLib", "xqLib\xqLib.csproj", "{A31D0056-64F8-45D3-9B2C-A412971BB637}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D4C7D6C2-BD23-4D91-9243-04BB48B9666A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4C7D6C2-BD23-4D91-9243-04BB48B9666A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4C7D6C2-BD23-4D91-9243-04BB48B9666A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A31D0056-64F8-45D3-9B2C-A412971BB637}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A31D0056-64F8-45D3-9B2C-A412971BB637}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A31D0056-64F8-45D3-9B2C-A412971BB637}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A31D0056-64F8-45D3-9B2C-A412971BB637}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
