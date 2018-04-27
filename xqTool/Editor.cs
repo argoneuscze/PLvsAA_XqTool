@@ -17,7 +17,7 @@ namespace xqTool
             {
                 var xq = new Xq(openFileDialog1.OpenFile());
 
-                foreach (var cmd in xq.commands)
+                foreach (var cmd in xq.debug)
                 {
                     textBox1.AppendText(cmd);
                     textBox1.AppendText(Environment.NewLine);

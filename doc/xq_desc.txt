@@ -1,0 +1,37 @@
+(Courtesy of onepiecefreak @ FTI)
+
+XQ
+Header
+0x0		0x4		Magic "XQ32"
+
+0x8		0x4		n<<2 = headersize
+0xc		0x2		n<<2 = table 1 offset
+
+0x10	0x2		n<<2 = table 2 offset
+
+0x16	0x2		n<<2 = table 3 offset
+
+Table 1 (Level5 compressed)
+Collection of 0xc long entries
+0x0		0x2		n*8 into table 2
+0x2		0x2		commandCount in table 2
+0x4		0x2		only 0x3e9?
+0x6		0x2		?
+0x8		0x4		only zer0?
+
+Table 2 (Level5 compressed)
+Collection of commands?
+0x0		0x4		command code
+0x4		0x4		value for this code
+
+Command codes known
+LSB seems to be not part of the code itself, but seems to indicate something.
+After shifting code 1 bit to right following codes appear:
+0x0 - integer?
+0x1 - hash?
+0x2 - ?
+0xe - string -> command value is offset into table 3 then, to gather the string
+
+Table 3 (Level5 compressed)
+Strings to be called by command codes from Table 2
+

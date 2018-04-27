@@ -1,0 +1,12 @@
+Header
+Header size seems wrong, gives too large values - maybe it's only two bytes, unshifted?
+
+T1
+T1 is the actual sequence of the commands, possibly (but there are more commands in the 2nd table?) - could be bogus commands, considering the strange arguments
+T2Off might be multiplied by 2/4/6/8 - try it out
+CmdCount is some sort of binary flag - 0/1/2/4
+
+T2
+CMD can be bitshifted to the right? what does it mean
+
+Still missing some strings - Seq_00100 Init at the end - maybe offsets from T1 into T3? (Unk2?)
