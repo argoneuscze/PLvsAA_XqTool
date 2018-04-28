@@ -45,6 +45,7 @@
     <Compile Include="Compression\Level5.cs" />
     <Compile Include="Compression\LZ10.cs" />
     <Compile Include="ImprovedBinaryReader.cs" />
+    <Compile Include="ImprovedBinaryWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -21,22 +21,31 @@ namespace xqLib
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct T0Entry
     {
-        public int dbg;
+        public int nameOffset;
+        public int CRC32;
+        public short T2From;
+        public short T2To;
+        public short T1From;
+        public short T1Count;
+        public int Unk5;
+        public int Unk6;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct T1Entry
     {
-        public int dbg;
+        public int nameOffset;
+        public int CRC32;
+        public int T2EntryId;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct T2Entry
     {
-        public short T3Offset; // Offset into T3 * 8
+        public short T3EntryId;
         public short T3ArgCount;
         public short Unk1;
-        public short Unk2;
+        public short FuncId;
         public int Unk3;
     }
 

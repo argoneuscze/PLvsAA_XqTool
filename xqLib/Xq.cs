@@ -68,28 +68,39 @@ namespace xqLib
                         t3_list.Add(table3.ReadStruct<T3Entry>());
                 }
 
-                debug.Add("Header");
-                debug.Add(
-                    $"T0: {header.T0 << 2:X}, T1: {header.T1 << 2:X}, T2: {header.T2 << 2:X}, T3: {header.T3 << 2:X}");
-
                 debug.Add("T0");
 
-                foreach (var item in t0_list) debug.Add($"Val: {item.dbg:X8}");
+                foreach (var item in t0_list)
+                    debug.Add(
+                        $"nameOffset: {item.nameOffset:X8}, CRC: {item.CRC32:X8}, T1From: {item.T1From:X4}, T1Count: {item.T1Count:X4}, T2From: {item.T2From:X4}, T2To: {item.T2To:X4}, Unk5: {item.Unk5:X8}, Unk6: {item.Unk6:X8}");
+
+                debug.Add("T1");
+
+                foreach (var item in t1_list)
+                    debug.Add(
+                        $"nameOffset: {item.nameOffset:X8}, CRC32: {item.CRC32:X8}, T2Entry: {item.T2EntryId:X8}");
 
                 debug.Add("T2");
 
+                var cur = 0;
                 foreach (var item in t2_list)
-                {
-                    debug.Add($"T2Off: {item.T3Offset:X}, ArgCount: {item.T3ArgCount:X}");
-                    debug.Add($"Unk1: {item.Unk1:X}, Unk2: {item.Unk2:X}, Unk3: {item.Unk3:X}");
-                }
+                    debug.Add(
+                        $"ID: {cur++:X}, T3Off: {item.T3EntryId:X}, ArgCount: {item.T3ArgCount:X}, Unk1: {item.Unk1:X}, FuncId: {item.FuncId:X}, Unk3: {item.Unk3:X}");
 
-                debug.Add("T2");
+                debug.Add("T3");
 
+                cur = 0;
+                foreach (var item in t3_list)
+                    debug.Add(
+                        $"ID: {cur++:X}, Cmd: {item.Cmd:X}, Val: {item.Value:X}");
+
+                /*debug.Add("T3");
+                
+                var cur = 0;
                 // table 4
                 foreach (var entry in t3_list)
                 {
-                    if (entry.Cmd >> 1 != 0xC) debug.Add($"Cmd: {entry.Cmd >> 1}, Value: {entry.Value:X}");
+                    debug.Add($"ID: {cur++:X}, Cmd: {entry.Cmd >> 1}, Value: {entry.Value:X}");
 
                     if (entry.Cmd >> 1 != 0xC) continue;
 
@@ -99,17 +110,120 @@ namespace xqLib
                         text.BaseStream.Position = entry.Value;
                         var str = text.ReadCStringSJIS();
 
-                        debug.Add("String: " + str);
+                        //debug.Add("String: " + str);
 
                         commands.Add(str);
+                    }
+                }*/
+
+                // print names in table 0
+                debug.Add("T0 Names");
+                foreach (var entry in t0_list)
+                {
+                    reader.BaseStream.Position = header.T4 << 2;
+                    using (var text = new ImprovedBinaryReader(new MemoryStream(Level5.Decompress(reader.BaseStream))))
+                    {
+                        text.BaseStream.Position = entry.nameOffset;
+                        var str = text.ReadCStringSJIS();
+
+                        debug.Add("Name: " + str);
+                    }
+                }
+
+                // print names in table 1
+                debug.Add("T1 Names");
+                foreach (var entry in t1_list)
+                {
+                    reader.BaseStream.Position = header.T4 << 2;
+                    using (var text = new ImprovedBinaryReader(new MemoryStream(Level5.Decompress(reader.BaseStream))))
+                    {
+                        text.BaseStream.Position = entry.nameOffset;
+                        var str = text.ReadCStringSJIS();
+
+                        debug.Add("Name: " + str);
+                    }
+                }
+
+                // parse commands in table 2
+                debug.Add("Commands");
+                foreach (var t2Entry in t2_list)
+                {
+                    debug.Add($"New Command: {t2Entry.FuncId:X}");
+
+                    for (var i = 0; i < t2Entry.T3ArgCount; ++i)
+                    {
+                        var cmdArgEntry = t3_list[t2Entry.T3EntryId + i];
+
+                        if (cmdArgEntry.Cmd >> 1 == 0xC)
+                        {
+                            reader.BaseStream.Position = header.T4 << 2;
+                            using (var text =
+                                new ImprovedBinaryReader(new MemoryStream(Level5.Decompress(reader.BaseStream))))
+                            {
+                                text.BaseStream.Position = cmdArgEntry.Value;
+                                var str = text.ReadCStringSJIS();
+
+                                debug.Add($"ArgString: {str}");
+
+                                commands.Add(str);
+                            }
+                        }
+                        else
+                        {
+                            debug.Add($"ArgCmd: {cmdArgEntry.Cmd >> 1}, ArgValue: {cmdArgEntry.Value:X}");
+                        }
                     }
                 }
             }
         }
 
-        private void Save()
+        public void Save(Stream file)
         {
-            // TODO
+            using (var writer = new ImprovedBinaryWriter(file))
+            {
+                writer.WriteStruct(header);
+                writer.WritePadding(8);
+
+                // TODO change header pointers between each step, write into an intermediate outstream
+
+                using (var table0 = new ImprovedBinaryWriter(new MemoryStream()))
+                {
+                    foreach (var entry in t0_list) table0.WriteStruct(entry);
+
+                    table0.BaseStream.Position = 0;
+                    writer.Write(Level5.Compress(table0.BaseStream, Level5.Method.LZ10));
+                    writer.WriteAlignment();
+                }
+
+                using (var table1 = new ImprovedBinaryWriter(new MemoryStream()))
+                {
+                    foreach (var entry in t1_list) table1.WriteStruct(entry);
+
+                    table1.BaseStream.Position = 0;
+                    writer.Write(Level5.Compress(table1.BaseStream, Level5.Method.LZ10));
+                    writer.WriteAlignment();
+                }
+
+                using (var table2 = new ImprovedBinaryWriter(new MemoryStream()))
+                {
+                    foreach (var entry in t2_list) table2.WriteStruct(entry);
+
+                    table2.BaseStream.Position = 0;
+                    writer.Write(Level5.Compress(table2.BaseStream, Level5.Method.LZ10));
+                    writer.WriteAlignment();
+                }
+
+                using (var table3 = new ImprovedBinaryWriter(new MemoryStream()))
+                {
+                    foreach (var entry in t3_list) table3.WriteStruct(entry);
+
+                    table3.BaseStream.Position = 0;
+                    writer.Write(Level5.Compress(table3.BaseStream, Level5.Method.LZ10));
+                    writer.WriteAlignment();
+                }
+
+                // TODO write name data at the end
+            }
         }
     }
 }
