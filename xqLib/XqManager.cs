@@ -26,6 +26,9 @@ namespace xqLib
 
         public void Save(Stream file)
         {
+            // TODO put this somewhere better
+            ReplaceTextData(27, "レイトン");
+
             _xq.Save(file);
         }
 
