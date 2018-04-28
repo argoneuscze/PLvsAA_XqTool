@@ -76,50 +76,92 @@ namespace xqLib
 
         public void Save(Stream file)
         {
-            using (var writer = new ImprovedBinaryWriter(file))
+            using (var fw = new ImprovedBinaryWriter(file))
             {
-                writer.WriteStruct(header);
-                writer.WritePadding(8);
+                var outstream = new MemoryStream();
+                short header_size = 0x20;
 
-                // TODO change header pointers between each step, write into an intermediate outstream
-
-                using (var table0 = new ImprovedBinaryWriter(new MemoryStream()))
+                var new_header = new Header
                 {
-                    foreach (var entry in t0_list) table0.WriteStruct(entry);
+                    Magic = header.Magic,
+                    Unk1 = header.Unk1
+                };
 
-                    table0.BaseStream.Position = 0;
-                    writer.Write(Level5.Compress(table0.BaseStream, Level5.Method.LZ10));
-                    writer.WriteAlignment();
+                byte[] data;
+
+                using (var bw = new ImprovedBinaryWriter(outstream))
+                {
+                    // table 0
+                    using (var table0 = new ImprovedBinaryWriter(new MemoryStream()))
+                    {
+                        new_header.T0 = (short) (header_size >> 2);
+                        new_header.T0_Count = (short) t0_list.Count;
+
+                        foreach (var entry in t0_list) table0.WriteStruct(entry);
+
+                        table0.BaseStream.Position = 0;
+                        bw.Write(Level5.Compress(table0.BaseStream, Level5.Method.LZ10));
+                        bw.WriteAlignment(4);
+                    }
+
+                    // table 1
+                    using (var table1 = new ImprovedBinaryWriter(new MemoryStream()))
+                    {
+                        new_header.T1 = (short) ((bw.BaseStream.Position + header_size) >> 2);
+                        new_header.T1_Count = (short) t1_list.Count;
+
+                        foreach (var entry in t1_list) table1.WriteStruct(entry);
+
+                        table1.BaseStream.Position = 0;
+                        bw.Write(Level5.Compress(table1.BaseStream, Level5.Method.LZ10));
+                        bw.WriteAlignment(4);
+                    }
+
+                    // table 2
+                    using (var table2 = new ImprovedBinaryWriter(new MemoryStream()))
+                    {
+                        new_header.T2 = (short) ((bw.BaseStream.Position + header_size) >> 2);
+                        new_header.T2_Count = (short) t2_list.Count;
+
+                        foreach (var entry in t2_list) table2.WriteStruct(entry);
+
+                        table2.BaseStream.Position = 0;
+                        bw.Write(Level5.Compress(table2.BaseStream, Level5.Method.LZ10));
+                        bw.WriteAlignment(4);
+                    }
+
+                    // table 3
+                    using (var table3 = new ImprovedBinaryWriter(new MemoryStream()))
+                    {
+                        new_header.T3 = (short) ((bw.BaseStream.Position + header_size) >> 2);
+                        new_header.T3_Count = (short) t3_list.Count;
+
+                        foreach (var entry in t3_list) table3.WriteStruct(entry);
+
+                        table3.BaseStream.Position = 0;
+                        bw.Write(Level5.Compress(table3.BaseStream, Level5.Method.LZ10));
+                        bw.WriteAlignment(4);
+                    }
+
+                    // table 4 (string data)
+                    using (var table4 = new ImprovedBinaryWriter(new MemoryStream()))
+                    {
+                        new_header.T4 = (short) ((bw.BaseStream.Position + header_size) >> 2);
+
+                        table4.Write(t4_data.ToArray());
+
+                        table4.BaseStream.Position = 0;
+                        bw.Write(Level5.Compress(table4.BaseStream, Level5.Method.LZ10));
+                        bw.WriteAlignment(4);
+                    }
+
+                    data = outstream.ToArray();
                 }
 
-                using (var table1 = new ImprovedBinaryWriter(new MemoryStream()))
-                {
-                    foreach (var entry in t1_list) table1.WriteStruct(entry);
+                fw.WriteStruct(new_header);
+                fw.WritePadding(8);
 
-                    table1.BaseStream.Position = 0;
-                    writer.Write(Level5.Compress(table1.BaseStream, Level5.Method.LZ10));
-                    writer.WriteAlignment();
-                }
-
-                using (var table2 = new ImprovedBinaryWriter(new MemoryStream()))
-                {
-                    foreach (var entry in t2_list) table2.WriteStruct(entry);
-
-                    table2.BaseStream.Position = 0;
-                    writer.Write(Level5.Compress(table2.BaseStream, Level5.Method.LZ10));
-                    writer.WriteAlignment();
-                }
-
-                using (var table3 = new ImprovedBinaryWriter(new MemoryStream()))
-                {
-                    foreach (var entry in t3_list) table3.WriteStruct(entry);
-
-                    table3.BaseStream.Position = 0;
-                    writer.Write(Level5.Compress(table3.BaseStream, Level5.Method.LZ10));
-                    writer.WriteAlignment();
-                }
-
-                // TODO write name data at the end
+                fw.Write(data);
             }
         }
 
