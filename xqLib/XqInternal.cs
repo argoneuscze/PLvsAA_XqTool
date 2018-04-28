@@ -165,6 +165,34 @@ namespace xqLib
             }
         }
 
+        public void RealignTextOffsets(int offset, int count, bool replacing = false)
+        {
+            // table 0
+            for (var i = 0; i < t0_list.Count; ++i)
+            {
+                var entry = t0_list[i];
+                if (!replacing && entry.nameOffset >= offset || replacing && entry.nameOffset > offset)
+                    entry.nameOffset += count;
+            }
+
+            // table 1
+            for (var i = 0; i < t1_list.Count; ++i)
+            {
+                var entry = t1_list[i];
+                if (!replacing && entry.nameOffset >= offset || replacing && entry.nameOffset > offset)
+                    entry.nameOffset += count;
+            }
+
+            // table 3
+            for (var i = 0; i < t3_list.Count; ++i)
+            {
+                var entry = t3_list[i];
+                if (entry.Cmd != 0x18) continue;
+                if (!replacing && entry.Value >= offset || replacing && entry.Value > offset)
+                    entry.Value += count;
+            }
+        }
+
         public List<string> GetDebugData()
         {
             var debug = new List<string>();
@@ -173,13 +201,13 @@ namespace xqLib
 
             foreach (var item in t0_list)
                 debug.Add(
-                    $"nameOffset: {item.nameOffset:X8}, CRC: {item.CRC32:X8}, T1From: {item.T1From:X4}, T1Count: {item.T1Count:X4}, T2From: {item.T2From:X4}, T2To: {item.T2To:X4}, Unk5: {item.Unk5:X8}, Unk6: {item.Unk6:X8}");
+                    $"nameOffset: {item.nameOffset:X8}, nameCRC32: {item.nameCRC32:X8}, T1From: {item.T1From:X4}, T1Count: {item.T1Count:X4}, T2From: {item.T2From:X4}, T2To: {item.T2To:X4}, Unk5: {item.Unk5:X8}, Unk6: {item.Unk6:X8}");
 
             debug.Add("T1");
 
             foreach (var item in t1_list)
                 debug.Add(
-                    $"nameOffset: {item.nameOffset:X8}, CRC32: {item.CRC32:X8}, T2Entry: {item.T2EntryId:X8}");
+                    $"nameOffset: {item.nameOffset:X8}, nameCRC32: {item.nameCRC32:X8}, T2Entry: {item.T2EntryId:X8}");
 
             debug.Add("T2");
 
@@ -229,16 +257,17 @@ namespace xqLib
                     {
                         var cmdArgEntry = t3_list[t2Entry.T3EntryId + i];
 
-                        if (cmdArgEntry.Cmd >> 1 == 0xC)
+                        if (cmdArgEntry.Cmd == 0x18)
                             using (var text = new ImprovedBinaryReader(reader.BaseStream, true))
                             {
                                 text.BaseStream.Position = cmdArgEntry.Value;
                                 var str = text.ReadCStringSJIS();
 
-                                debug.Add($"ArgString: {str}");
+                                debug.Add(
+                                    $"ArgCmd: {cmdArgEntry.Cmd}, StrOffset: {cmdArgEntry.Value}, ArgString: {str}");
                             }
                         else
-                            debug.Add($"ArgCmd: {cmdArgEntry.Cmd >> 1}, ArgValue: {cmdArgEntry.Value:X}");
+                            debug.Add($"ArgCmd: {cmdArgEntry.Cmd}, ArgValue: {cmdArgEntry.Value:X}");
                     }
                 }
             }

@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Checksum\Crc32.cs" />
     <Compile Include="Compression\Level5.cs" />
     <Compile Include="Compression\LZ10.cs" />
     <Compile Include="ImprovedBinaryReader.cs" />
