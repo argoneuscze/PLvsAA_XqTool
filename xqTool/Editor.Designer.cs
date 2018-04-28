@@ -63,10 +63,10 @@
             // textBox1
             // 
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Location = new System.Drawing.Point(0, 24);
+            this.textBox1.Location = new System.Drawing.Point(0, 49);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(570, 402);
+            this.textBox1.Size = new System.Drawing.Size(570, 377);
             this.textBox1.TabIndex = 1;
             // 
             // toolStrip1
@@ -94,8 +94,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(570, 426);
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Editor";

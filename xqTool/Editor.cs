@@ -6,7 +6,7 @@ namespace xqTool
 {
     public partial class Editor : Form
     {
-        private Xq _xq;
+        private XqManager _xq;
 
         public Editor()
         {
@@ -20,9 +20,9 @@ namespace xqTool
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                _xq = new Xq(openFileDialog1.OpenFile());
+                _xq = XqManager.FromStream(openFileDialog1.OpenFile());
 
-                foreach (var cmd in _xq.debug)
+                foreach (var cmd in _xq.GetDebugData())
                 {
                     textBox1.AppendText(cmd);
                     textBox1.AppendText(Environment.NewLine);
