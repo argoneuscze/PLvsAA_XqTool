@@ -15,6 +15,8 @@ namespace xqTool
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                Activate();
+
                 var xq = new Xq(openFileDialog1.OpenFile());
 
                 foreach (var cmd in xq.debug)
@@ -22,8 +24,6 @@ namespace xqTool
                     textBox1.AppendText(cmd);
                     textBox1.AppendText(Environment.NewLine);
                 }
-
-                Activate();
             }
         }
     }

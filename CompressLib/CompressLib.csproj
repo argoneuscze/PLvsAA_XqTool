@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A31D0056-64F8-45D3-9B2C-A412971BB637}</ProjectGuid>
+    <ProjectGuid>{B55F2022-C30C-457E-BC9F-519A891B1DE0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>xqLib</RootNamespace>
-    <AssemblyName>xqLib</AssemblyName>
+    <RootNamespace>CompressLib</RootNamespace>
+    <AssemblyName>CompressLib</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,17 +34,18 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Xq.cs" />
+    <Compile Include="Compression\Level5.cs" />
+    <Compile Include="Compression\LZ10.cs" />
+    <Compile Include="ImprovedBinaryReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XqStructs.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CompressLib\CompressLib.csproj">
-      <Project>{b55f2022-c30c-457e-bc9f-519a891b1de0}</Project>
-      <Name>CompressLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
