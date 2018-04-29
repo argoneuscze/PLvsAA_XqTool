@@ -38,10 +38,11 @@ Most of these aren't confirmed or are WIP
 These go into T2Entry->funcId, their arguments go into T3
 
 FUNC 0x1B59 (String Character, String Emote)
-Play emote
+Play emote?
+Only works during EventTalkRun most likely
 
 FUNC 0x3FAD (Int ??? (usually 4), String[] Characters)
-Spawn character
+Init scene character?
 
 FUNC 0x3FAF (Int ??? (usually 4), String[] Characters)
 Spawn multiple characters?
@@ -50,13 +51,8 @@ Spawn courtroom characters?
 FUNC 0x21
 Speaking?
 
-[7] New Command: 14 (DAECCFD, Character, Int, Int, Int, Int)
-Seems to control showing characters
+FUNC 0x14
+- first value gives opcode for scene function
 
-Layton:
-ArgCmd: 2, ArgValue: DAECCFD
-ArgCmd: 18, StrOffset: 2D, ArgString: レイトン
-ArgCmd: 2, ArgValue: 12
-ArgCmd: 1, ArgValue: 9
-ArgCmd: 1, ArgValue: 2
-ArgCmd: 1, ArgValue: 1
+Event3DCharaInit [DAECCFD] (Character, Int, Int, Int)
+Spawn 3D character on scene
