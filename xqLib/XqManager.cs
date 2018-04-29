@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using CompressLib.Checksum;
 
 namespace xqLib
 {
@@ -29,21 +31,106 @@ namespace xqLib
             // TODO put this somewhere better
             var length = AddTextData(0x1B, "レイトン");
 
-            var arg1 = new T3Entry
-            {
-                Cmd = 0x18,
-                Value = 0x1B + length
-            };
+            RemoveFunctionCall(1);
+            RemoveFunctionCall(1);
 
-            var arg2 = new T3Entry
-            {
-                Cmd = 0x18,
-                Value = 0x1B
-            };
+            AddFunctionCall(1, 0x1B59,
+                new T3Entry
+                {
+                    Cmd = 0x18,
+                    Value = 0x1B
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0x01
+                }, new T3Entry
+                {
+                    Cmd = 0x18,
+                    Value = 0x1B + length
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0x01
+                });
 
-            T3Entry[] args = {arg1, arg2};
+            AddFunctionCall(1, 0x3FAD,
+                new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0x04
+                }, new T3Entry
+                {
+                    Cmd = 0x18,
+                    Value = 0x1B
+                },
+                new T3Entry
+                {
+                    Cmd = 0x18,
+                    Value = 0x1B + length
+                });
 
-            //AddFunctionCall(7, 0x1B59, args);
+            RemoveFunctionCall(7);
+
+            AddFunctionCall(7, 0x14,
+                new T3Entry
+                {
+                    Cmd = 0x02,
+                    Value = 0xDAECCFD
+                }, new T3Entry
+                {
+                    Cmd = 0x18,
+                    Value = 0x1B
+                },
+                new T3Entry
+                {
+                    Cmd = 0x02,
+                    Value = 0x11
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0x08
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0x01
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0x01
+                });
+
+            AddFunctionCall(8, 0x14,
+                new T3Entry
+                {
+                    Cmd = 0x02,
+                    Value = 0xDAECCFD
+                }, new T3Entry
+                {
+                    Cmd = 0x18,
+                    Value = 0x1B + length
+                },
+                new T3Entry
+                {
+                    Cmd = 0x02,
+                    Value = 0x22
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0xB
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0x7
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = 0x2
+                });
+
+            //RemoveFunctionCall(6);
+            //RemoveFunctionCall(6);
+            //RemoveFunctionCall(6);
+            //RemoveFunctionCall(6);
 
             _xq.Save(file);
         }

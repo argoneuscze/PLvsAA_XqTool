@@ -1,4 +1,4 @@
-== Tables ==
+﻿== Tables ==
 
 T0
 Contains a list of named sequences
@@ -23,6 +23,12 @@ Strings used for loading characters, functions etc.
 These are used in T3 as arguments to the functions from T2
 Type:Value pairs
 
+ARG 0x01 - Int
+A regular value
+
+ARG 0x02 - Hash
+Some sort of hashed value
+
 ARG 0x18 - String
 String offset mapped into T4
 
@@ -31,5 +37,26 @@ String offset mapped into T4
 Most of these aren't confirmed or are WIP
 These go into T2Entry->funcId, their arguments go into T3
 
-FUNC 0x1B59 (String, String)
-Transition between two characters?
+FUNC 0x1B59 (String Character, String Emote)
+Play emote
+
+FUNC 0x3FAD (Int ??? (usually 4), String[] Characters)
+Spawn character
+
+FUNC 0x3FAF (Int ??? (usually 4), String[] Characters)
+Spawn multiple characters?
+Spawn courtroom characters?
+
+FUNC 0x21
+Speaking?
+
+[7] New Command: 14 (DAECCFD, Character, Int, Int, Int, Int)
+Seems to control showing characters
+
+Layton:
+ArgCmd: 2, ArgValue: DAECCFD
+ArgCmd: 18, StrOffset: 2D, ArgString: レイトン
+ArgCmd: 2, ArgValue: 12
+ArgCmd: 1, ArgValue: 9
+ArgCmd: 1, ArgValue: 2
+ArgCmd: 1, ArgValue: 1

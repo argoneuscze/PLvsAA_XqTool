@@ -38,6 +38,7 @@
     <Compile Include="XqInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XqManager.cs" />
+    <Compile Include="XqOpcodes.cs" />
     <Compile Include="XqStructs.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +50,9 @@
   <ItemGroup>
     <Content Include="doc\xq_desc.txt" />
     <Content Include="doc\xq_notes.txt" />
+    <Content Include="util\opcode_strings.txt" />
+    <Content Include="util\parse_opcodes.py" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

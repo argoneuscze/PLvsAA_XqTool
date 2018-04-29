@@ -196,6 +196,7 @@ namespace xqLib
         public List<string> GetDebugData()
         {
             var debug = new List<string>();
+            var debug_opcodes = new List<string>();
 
             debug.Add("T0");
 
@@ -234,6 +235,7 @@ namespace xqLib
                         var str = text.ReadCStringSJIS();
 
                         debug.Add("Name: " + str);
+                        //debug_opcodes.Add(str);
                     }
 
                 // print names in table 1
@@ -258,7 +260,15 @@ namespace xqLib
                     {
                         var cmdArgEntry = t3_list[t2Entry.T3EntryId + i];
 
-                        if (cmdArgEntry.Cmd == 0x18)
+                        if (t2Entry.FuncId == 0x14 && i == 0)
+                        {
+                            string opcode;
+                            opcode = XqOpcodes.OpCodes.TryGetValue((uint) cmdArgEntry.Value, out opcode)
+                                ? opcode
+                                : "N/A";
+                            debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X} [{opcode}]");
+                        }
+                        else if (cmdArgEntry.Cmd == 0x18)
                             using (var text = new ImprovedBinaryReader(reader.BaseStream, true))
                             {
                                 text.BaseStream.Position = cmdArgEntry.Value;
