@@ -1,0 +1,35 @@
+== Tables ==
+
+T0
+Contains a list of named sequences
+Maps function calls into T2
+Maps subsequences into T1
+
+T1 (?)
+Maps subsequences into T2
+
+T2
+Contains actual function calls
+Maps their arguments into T3
+
+T3
+Contains various arguments to function calls from T2
+
+T4
+Strings used for loading characters, functions etc.
+
+== Arguments ==
+
+These are used in T3 as arguments to the functions from T2
+Type:Value pairs
+
+ARG 0x18 - String
+String offset mapped into T4
+
+== Functions ==
+
+Most of these aren't confirmed or are WIP
+These go into T2Entry->funcId, their arguments go into T3
+
+FUNC 0x1B59 (String, String)
+Transition between two characters?

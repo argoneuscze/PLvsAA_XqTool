@@ -80,9 +80,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="lib\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\xqLib\xqLib.csproj">
       <Project>{a31d0056-64f8-45d3-9b2c-a412971bb637}</Project>

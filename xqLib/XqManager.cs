@@ -27,17 +27,35 @@ namespace xqLib
         public void Save(Stream file)
         {
             // TODO put this somewhere better
-            ReplaceTextData(27, "レイトン");
+            var length = AddTextData(0x1B, "レイトン");
+
+            var arg1 = new T3Entry
+            {
+                Cmd = 0x18,
+                Value = 0x1B + length
+            };
+
+            var arg2 = new T3Entry
+            {
+                Cmd = 0x18,
+                Value = 0x1B
+            };
+
+            T3Entry[] args = {arg1, arg2};
+
+            //AddFunctionCall(7, 0x1B59, args);
 
             _xq.Save(file);
         }
 
-        public void AddTextData(int offset, string value)
+        public int AddTextData(int offset, string value)
         {
             var bytes = Encoding.GetEncoding("Shift-JIS").GetBytes(value + '\0');
             _xq.t4_data.InsertRange(offset, bytes);
 
             _xq.RealignTextOffsets(offset, bytes.Length);
+
+            return bytes.Length;
         }
 
         public int DeleteTextData(int offset, bool realign = true)
@@ -66,6 +84,76 @@ namespace xqLib
 
             _xq.t4_data.InsertRange(offset, bytes);
             _xq.RealignTextOffsets(offset, diff, true);
+        }
+
+        public void AddFunctionCall(short offset, short function, params T3Entry[] args)
+        {
+            var call = new T2Entry()
+            {
+                FuncId = function,
+                T3ArgCount = (short) args.Length,
+                Unk1 = 0x3E9,
+                Unk3 = 0
+            };
+
+            // find T3 argument location
+            var oldID = _xq.t2_list[offset].T3EntryId;
+            call.T3EntryId = (short) (oldID);
+
+            // add to table
+            _xq.t2_list.Insert(offset, call);
+
+            // add arguments to T3
+            for (var i = 0; i < args.Length; ++i)
+            {
+                _xq.t3_list.Insert(call.T3EntryId + i, args[i]);
+            }
+
+            // move T3 offset of every successive call by argument length
+            for (var i = offset + 1; i < _xq.t2_list.Count; ++i)
+            {
+                _xq.t2_list[i].T3EntryId += (short) args.Length;
+            }
+
+            // increase the containing sequence's range
+            for (var i = 0; i < _xq.t0_list.Count; ++i)
+            {
+                var seq = _xq.t0_list[i];
+                if (seq.T2From > offset)
+                    seq.T2From++;
+                if (seq.T2To >= offset)
+                    seq.T2To++;
+            }
+        }
+
+        public void RemoveFunctionCall(short offset)
+        {
+            var call = _xq.t2_list[offset];
+
+            // reduce containing sequence's range
+            for (var i = 0; i < _xq.t0_list.Count; ++i)
+            {
+                var seq = _xq.t0_list[i];
+                if (seq.T2From > offset)
+                    seq.T2From--;
+                if (seq.T2To >= offset)
+                    seq.T2To--;
+            }
+
+            // move T3 offset of every successive call by negative argument length
+            for (var i = offset + 1; i < _xq.t2_list.Count; ++i)
+            {
+                _xq.t2_list[i].T3EntryId -= (short) call.T3ArgCount;
+            }
+
+            // remove arguments from T3
+            for (var i = 0; i < call.T3ArgCount; ++i)
+            {
+                _xq.t3_list.RemoveAt(call.T3EntryId + i);
+            }
+
+            // remove from list
+            _xq.t2_list.RemoveAt(offset);
         }
     }
 }

@@ -249,9 +249,10 @@ namespace xqLib
 
                 // parse commands in table 2
                 debug.Add("Commands");
+                var cnt = 0;
                 foreach (var t2Entry in t2_list)
                 {
-                    debug.Add($"New Command: {t2Entry.FuncId:X}");
+                    debug.Add($"[{cnt++}] New Command: {t2Entry.FuncId:X}");
 
                     for (var i = 0; i < t2Entry.T3ArgCount; ++i)
                     {
@@ -264,10 +265,10 @@ namespace xqLib
                                 var str = text.ReadCStringSJIS();
 
                                 debug.Add(
-                                    $"ArgCmd: {cmdArgEntry.Cmd}, StrOffset: {cmdArgEntry.Value}, ArgString: {str}");
+                                    $"ArgCmd: {cmdArgEntry.Cmd:X}, StrOffset: {cmdArgEntry.Value:X}, ArgString: {str}");
                             }
                         else
-                            debug.Add($"ArgCmd: {cmdArgEntry.Cmd}, ArgValue: {cmdArgEntry.Value:X}");
+                            debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X}");
                     }
                 }
             }

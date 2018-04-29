@@ -46,5 +46,9 @@
       <Name>CompressLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="doc\xq_desc.txt" />
+    <Content Include="doc\xq_notes.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

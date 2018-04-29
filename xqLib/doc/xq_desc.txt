@@ -34,4 +34,3 @@ After shifting code 1 bit to right following codes appear:
 
 Table 3 (Level5 compressed)
 Strings to be called by command codes from Table 2
-
