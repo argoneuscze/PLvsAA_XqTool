@@ -45,6 +45,7 @@
     <Compile Include="Checksum\Crc32.cs" />
     <Compile Include="Compression\Level5.cs" />
     <Compile Include="Compression\LZ10.cs" />
+    <Compile Include="Compression\RLE.cs" />
     <Compile Include="ImprovedBinaryReader.cs" />
     <Compile Include="ImprovedBinaryWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

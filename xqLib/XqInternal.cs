@@ -196,7 +196,7 @@ namespace xqLib
         public List<string> GetDebugData()
         {
             var debug = new List<string>();
-            var debug_opcodes = new List<string>();
+            var debug_2 = new List<string>();
 
             debug.Add("T0");
 
@@ -235,7 +235,6 @@ namespace xqLib
                         var str = text.ReadCStringSJIS();
 
                         debug.Add("Name: " + str);
-                        //debug_opcodes.Add(str);
                     }
 
                 // print names in table 1
@@ -248,24 +247,44 @@ namespace xqLib
 
                         debug.Add("Name: " + str);
                     }
-
                 // parse commands in table 2
                 debug.Add("Commands");
                 var cnt = 0;
                 foreach (var t2Entry in t2_list)
                 {
+                    if (t2Entry.FuncId != 0x1B59)
+                        continue;
+
                     debug.Add($"[{cnt++}] New Command: {t2Entry.FuncId:X}");
 
                     for (var i = 0; i < t2Entry.T3ArgCount; ++i)
                     {
                         var cmdArgEntry = t3_list[t2Entry.T3EntryId + i];
-
+                        
                         if (t2Entry.FuncId == 0x14 && i == 0)
                         {
                             string opcode;
                             opcode = XqOpcodes.OpCodes.TryGetValue((uint) cmdArgEntry.Value, out opcode)
                                 ? opcode
                                 : "N/A";
+
+                            /*
+                            if (opcode != "Event3DCharaInit" && opcode != "EvenCrtBuildChara" &&
+                                opcode != "Event3DCharaPlace_Crt")
+                                break;
+                            else
+                            {
+                                var chara = t3_list[t2Entry.T3EntryId + 1];
+                                using (var text = new ImprovedBinaryReader(reader.BaseStream, true))
+                                {
+                                    text.BaseStream.Position = chara.Value;
+                                    var str = text.ReadCStringSJIS();
+
+                                    debug_2.Add($"opcode: {opcode}, string: {str}");
+                                }
+                            }*/
+
+
                             debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X} [{opcode}]");
                         }
                         else if (cmdArgEntry.Cmd == 0x18)
@@ -274,11 +293,11 @@ namespace xqLib
                                 text.BaseStream.Position = cmdArgEntry.Value;
                                 var str = text.ReadCStringSJIS();
 
-                                debug.Add(
+                                debug_2.Add(
                                     $"ArgCmd: {cmdArgEntry.Cmd:X}, StrOffset: {cmdArgEntry.Value:X}, ArgString: {str}");
                             }
                         else
-                            debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X}");
+                            debug_2.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X}");
                     }
                 }
             }
@@ -288,7 +307,7 @@ namespace xqLib
             foreach (var b in t4_data) hex.AppendFormat("{0:X2} ", b);
             debug.Add(hex.ToString());
 
-            return debug;
+            return debug_2;
         }
     }
 }

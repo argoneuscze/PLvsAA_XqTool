@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using CompressLib.Compression;
 
 namespace CompressLib
 {
@@ -29,8 +30,10 @@ namespace CompressLib
                         return reader.ReadBytes(size);
                     case Method.LZ10:
                         return LZ10.Decompress(reader.BaseStream, size);
+                    case Method.RLE:
+                        return RLE.Decompress(reader.BaseStream, size);
                     default:
-                        throw new NotImplementedException("Unsupported compression method.");
+                        throw new NotImplementedException($"Unsupported compression method: {method}");
                 }
             }
         }

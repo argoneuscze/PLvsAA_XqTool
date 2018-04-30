@@ -6,7 +6,7 @@ using CompressLib.Checksum;
 
 namespace xqLib
 {
-    public class XqManager
+    public partial class XqManager
     {
         private readonly XqInternal _xq;
 
@@ -27,110 +27,43 @@ namespace xqLib
         }
 
         public void Save(Stream file)
-        {
+        {/*
             // TODO put this somewhere better
-            var length = AddTextData(0x1B, "レイトン");
+            var layton = AddTextData(0x1B, "レイトン");
+            var barnham = AddTextData(0x1B, "ジーケン");
+            var chelmey = 0;
 
-            RemoveFunctionCall(1);
-            RemoveFunctionCall(1);
+            var ba_off = 0x1B;
+            var la_off = ba_off + barnham;
+            var ch_off = ba_off + barnham + layton;
 
-            AddFunctionCall(1, 0x1B59,
-                new T3Entry
-                {
-                    Cmd = 0x18,
-                    Value = 0x1B
-                }, new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0x01
-                }, new T3Entry
-                {
-                    Cmd = 0x18,
-                    Value = 0x1B + length
-                }, new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0x01
-                });
+            // delete movie and chapter animation
+            RemoveFunctionCall(10);
+            RemoveFunctionCall(10);
 
-            AddFunctionCall(1, 0x3FAD,
-                new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0x04
-                }, new T3Entry
-                {
-                    Cmd = 0x18,
-                    Value = 0x1B
-                },
-                new T3Entry
-                {
-                    Cmd = 0x18,
-                    Value = 0x1B + length
-                });
-
+            // delete chelmey
             RemoveFunctionCall(7);
 
-            AddFunctionCall(7, 0x14,
-                new T3Entry
-                {
-                    Cmd = 0x02,
-                    Value = 0xDAECCFD
-                }, new T3Entry
-                {
-                    Cmd = 0x18,
-                    Value = 0x1B
-                },
-                new T3Entry
-                {
-                    Cmd = 0x02,
-                    Value = 0x11
-                }, new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0x08
-                }, new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0x01
-                }, new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0x01
-                });
+            RemoveFunctionCall(1);
+            RemoveFunctionCall(1);
 
-            AddFunctionCall(8, 0x14,
-                new T3Entry
-                {
-                    Cmd = 0x02,
-                    Value = 0xDAECCFD
-                }, new T3Entry
-                {
-                    Cmd = 0x18,
-                    Value = 0x1B + length
-                },
-                new T3Entry
-                {
-                    Cmd = 0x02,
-                    Value = 0x22
-                }, new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0xB
-                }, new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0x7
-                }, new T3Entry
-                {
-                    Cmd = 0x01,
-                    Value = 0x2
-                });
+            // spawn char
+            //AddFunc_Event3DCharaInit(5, layton, 0x12, 0x9, 0x2, 0x1);
+            //AddFunc_Event3DCharaInit(5, layton, 0x0, 0x9, 0x1, 0x1);
+            AddFunc_Event3DCharaInit(5, ba_off, 0x22, 0x1, 0x1, 0x1);
 
-            //RemoveFunctionCall(6);
-            //RemoveFunctionCall(6);
-            //RemoveFunctionCall(6);
-            //RemoveFunctionCall(6);
+            // init layton
+            AddFunc_1B59(1, ba_off, 2);
+            AddFunc_3FAD(1, 0x4, ba_off);
+
+            RemoveFunctionCall(17);
+            RemoveFunctionCall(17);
+            */
+
+            RemoveFunctionCall(50);
+            RemoveFunctionCall(26);
+            RemoveFunctionCall(24);
+            RemoveFunctionCall(14);
 
             _xq.Save(file);
         }
@@ -230,13 +163,13 @@ namespace xqLib
             // move T3 offset of every successive call by negative argument length
             for (var i = offset + 1; i < _xq.t2_list.Count; ++i)
             {
-                _xq.t2_list[i].T3EntryId -= (short) call.T3ArgCount;
+                _xq.t2_list[i].T3EntryId -= call.T3ArgCount;
             }
 
             // remove arguments from T3
             for (var i = 0; i < call.T3ArgCount; ++i)
             {
-                _xq.t3_list.RemoveAt(call.T3EntryId + i);
+                _xq.t3_list.RemoveAt(call.T3EntryId);
             }
 
             // remove from list
