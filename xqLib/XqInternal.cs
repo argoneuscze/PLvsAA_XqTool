@@ -190,7 +190,7 @@ namespace xqLib
                 var entry = t3_list[i];
                 if (entry.Cmd != 0x18) continue;
                 if (!replacing && entry.Value >= offset || replacing && entry.Value > offset)
-                    entry.Value += count;
+                    entry.Value += (uint)count;
             }
         }
 

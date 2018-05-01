@@ -8,7 +8,7 @@ namespace xqLib
 {
     public partial class XqManager
     {
-        public void AddFunc_3FAD(short insertIndex, int unk1, params int[] charNameOffsets)
+        public void AddFunc_3FAD(short insertIndex, uint unk1, params int[] charNameOffsets)
         {
             /*
              * Seems to initialize characters
@@ -27,13 +27,13 @@ namespace xqLib
             entries.AddRange(charNameOffsets.Select(t => new T3Entry
             {
                 Cmd = 0x18,
-                Value = t
+                Value = (uint) t
             }));
 
             AddFunctionCall(insertIndex, 0x3FAD, entries.ToArray());
         }
 
-        public void AddFunc_1B59(short insertIndex, int charNameOffset, int emoteId, bool isString = false)
+        public void AddFunc_1B59(short insertIndex, uint charNameOffset, uint emoteId, bool isString = false)
         {
             /*
              * Seems to play character emotes
@@ -46,13 +46,99 @@ namespace xqLib
                     Value = charNameOffset
                 }, new T3Entry
                 {
-                    Cmd = isString ? 0x18 : 0x01,
+                    Cmd = isString ? (uint) 0x18 : 0x01,
                     Value = emoteId
                 });
         }
 
-        public void AddFunc_Event3DCharaInit(short insertIndex, int charNameOffset,
-            int pos, int emote1, int emote2, int unk4)
+        public void AddFunc_14(short insertIndex, uint opCode, params T3Entry[] args)
+        {
+            /*
+             * Adds a command that controls the scene, see opcodes
+             */
+
+            var allArgs = new List<T3Entry>
+            {
+                new T3Entry
+                {
+                    Cmd = 0x02,
+                    Value = opCode
+                }
+            };
+            allArgs.AddRange(args);
+
+            AddFunctionCall(insertIndex, 0x14, allArgs.ToArray());
+        }
+
+        public void AddFunc_WaitFrame(short insertIndex, uint length)
+        {
+            AddFunc_14(insertIndex, 0xD0FD3A01, new T3Entry
+            {
+                Cmd = 0x01,
+                Value = length
+            });
+        }
+
+        public void AddFunc_EventMapFadeRGB3(short insertIndex, uint unk1, uint length, uint unk3)
+        {
+            AddFunc_14(insertIndex, 0xFD8D3202,
+                new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = unk1
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = length
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = unk3
+                });
+        }
+
+        public void AddFunc_EventGmpFadeRGB(short insertIndex, uint unk1, uint length, uint unk3)
+        {
+            AddFunc_14(insertIndex, 0x11B76BD2,
+                new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = unk1
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = length
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = unk3
+                });
+        }
+
+        public void AddFunc_EventMapFadeRGB4(short insertIndex, uint unk1, uint unk2, uint unk3, uint unk4)
+        {
+            AddFunc_14(insertIndex, 0x63E9A7A1,
+                new T3Entry
+                {
+                    Cmd = 0x04,
+                    Value = unk1
+                }, new T3Entry
+                {
+                    Cmd = 0x04,
+                    Value = unk2
+                }, new T3Entry
+                {
+                    Cmd = 0x04,
+                    Value = unk3
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = unk4
+                });
+        }
+
+        public void AddFunc_Event3DCharaInit(short insertIndex, uint charNameOffset,
+            uint pos, uint emote1, uint emote2, uint unk4)
         {
             /*
              * pos:
@@ -61,12 +147,8 @@ namespace xqLib
              *  0x12 - left
              */
 
-            AddFunctionCall(insertIndex, 0x14,
+            AddFunc_14(insertIndex, 0xDAECCFD,
                 new T3Entry
-                {
-                    Cmd = 0x02,
-                    Value = 0xDAECCFD
-                }, new T3Entry
                 {
                     Cmd = 0x18,
                     Value = charNameOffset

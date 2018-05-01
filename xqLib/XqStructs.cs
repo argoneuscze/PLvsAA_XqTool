@@ -52,7 +52,7 @@ namespace xqLib
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class T3Entry
     {
-        public int Cmd;
-        public int Value;
+        public uint Cmd;
+        public uint Value;
     }
 }
