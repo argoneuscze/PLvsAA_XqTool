@@ -35,8 +35,11 @@ namespace xqTool
 
                     var xq = XqManager.FromStream(stream);
                     var cmds = xq.GetDebugData();
+                    //var cmds = xq.dumpStrings();
 
                     data.AddRange(cmds);
+
+                    _xq = xq;
                 }
 
                 foreach (var item in data)

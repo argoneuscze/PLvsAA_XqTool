@@ -26,6 +26,11 @@ namespace xqLib
             return _xq.GetDebugData();
         }
 
+        public List<string> dumpStrings()
+        {
+            return _xq.dumpStrings();
+        }
+
         public void Save(Stream file)
         {/*
             // TODO put this somewhere better
@@ -59,11 +64,14 @@ namespace xqLib
             RemoveFunctionCall(17);
             RemoveFunctionCall(17);
             */
+            
+            RemoveFunctionCall(16);
 
-            RemoveFunctionCall(50);
-            RemoveFunctionCall(26);
-            RemoveFunctionCall(24);
-            RemoveFunctionCall(14);
+            AddFunctionCall(16, 0x14, new T3Entry
+            {
+                Cmd = 0x02,
+                Value = 0x2038A49E
+            });
 
             _xq.Save(file);
         }

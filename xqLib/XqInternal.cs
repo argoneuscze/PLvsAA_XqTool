@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CompressLib;
@@ -252,8 +253,8 @@ namespace xqLib
                 var cnt = 0;
                 foreach (var t2Entry in t2_list)
                 {
-                    if (t2Entry.FuncId != 0x1B59)
-                        continue;
+                    //if (t2Entry.FuncId != 0x1B59)
+                     //   continue;
 
                     debug.Add($"[{cnt++}] New Command: {t2Entry.FuncId:X}");
 
@@ -293,11 +294,11 @@ namespace xqLib
                                 text.BaseStream.Position = cmdArgEntry.Value;
                                 var str = text.ReadCStringSJIS();
 
-                                debug_2.Add(
+                                debug.Add(
                                     $"ArgCmd: {cmdArgEntry.Cmd:X}, StrOffset: {cmdArgEntry.Value:X}, ArgString: {str}");
                             }
                         else
-                            debug_2.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X}");
+                            debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X}");
                     }
                 }
             }
@@ -307,7 +308,32 @@ namespace xqLib
             foreach (var b in t4_data) hex.AppendFormat("{0:X2} ", b);
             debug.Add(hex.ToString());
 
-            return debug_2;
+            return debug;
+        }
+
+        public List<string> dumpStrings()
+        {
+            var strings = new List<string>();
+
+            using (var reader = new ImprovedBinaryReader(new MemoryStream(t4_data.ToArray())))
+            {
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                {
+                    using (var text = new ImprovedBinaryReader(reader.BaseStream, true))
+                    {
+                        text.BaseStream.Position = reader.BaseStream.Position;
+                        var str = text.ReadCStringSJIS();
+
+                        strings.Add(str);
+
+                        Console.Out.WriteLine(reader.BaseStream.Position);
+
+                        reader.BaseStream.Position = text.BaseStream.Position;
+                    }
+                }
+            }
+
+            return strings;
         }
     }
 }

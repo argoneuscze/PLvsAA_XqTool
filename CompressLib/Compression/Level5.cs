@@ -32,6 +32,10 @@ namespace CompressLib
                         return LZ10.Decompress(reader.BaseStream, size);
                     case Method.RLE:
                         return RLE.Decompress(reader.BaseStream, size);
+                    case Method.Huffman4Bit:
+                        return Huffman.Decompress(reader.BaseStream, 4, size);
+                    case Method.Huffman8Bit:
+                        return Huffman.Decompress(reader.BaseStream, 8, size);
                     default:
                         throw new NotImplementedException($"Unsupported compression method: {method}");
                 }
