@@ -54,5 +54,14 @@ namespace xqLib
     {
         public uint Cmd;
         public uint Value;
+
+        public static T3Entry StringOffset(uint offset)
+        {
+            return new T3Entry
+            {
+                Cmd = 0x18,
+                Value = offset
+            };
+        }
     }
 }

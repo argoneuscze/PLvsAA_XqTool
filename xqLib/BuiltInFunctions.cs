@@ -79,6 +79,16 @@ namespace xqLib
             });
         }
 
+        public void AddFunc_EventSetMtnByMtnSet(short insertIndex, uint charNameOffset, uint emoteNameOffset, uint unk1)
+        {
+            AddFunc_14(insertIndex, 0x322EDC26, T3Entry.StringOffset(charNameOffset),
+                T3Entry.StringOffset(emoteNameOffset), new T3Entry
+                {
+                    Cmd = 1,
+                    Value = unk1
+                });
+        }
+
         public void AddFunc_EventMapFadeRGB3(short insertIndex, uint unk1, uint length, uint unk3)
         {
             AddFunc_14(insertIndex, 0xFD8D3202,
@@ -148,11 +158,7 @@ namespace xqLib
              */
 
             AddFunc_14(insertIndex, 0xDAECCFD,
-                new T3Entry
-                {
-                    Cmd = 0x18,
-                    Value = charNameOffset
-                },
+                T3Entry.StringOffset(charNameOffset),
                 new T3Entry
                 {
                     Cmd = 0x02,
@@ -170,6 +176,56 @@ namespace xqLib
                     Cmd = 0x01,
                     Value = unk4
                 });
+        }
+
+        public void AddFunc_Event3DChrMdl_Build2(short insertIndex, uint nameOffset, uint fileOffset)
+        {
+            AddFunc_14(insertIndex, 0x469FC6D7, T3Entry.StringOffset(nameOffset), T3Entry.StringOffset(fileOffset));
+        }
+
+        public void AddFunc_Event3DChrMdl_SetMdlMtn(short insertIndex, uint nameOffset, uint modelMotionOffset,
+            uint unk1, uint unk2)
+        {
+            AddFunc_14(insertIndex, 0x35A7DED7, T3Entry.StringOffset(nameOffset),
+                T3Entry.StringOffset(modelMotionOffset),
+                new T3Entry
+                {
+                    Cmd = 1,
+                    Value = unk1
+                },
+                new T3Entry
+                {
+                    Cmd = 1,
+                    Value = unk2
+                });
+        }
+
+        public void AddFunc_Event3DChrMdl_Visible(short insertIndex, uint nameOffset)
+        {
+            AddFunc_14(insertIndex, 0x2D95ABAF, T3Entry.StringOffset(nameOffset));
+        }
+
+        public void AddFunc_Event3DCharaNullAttach(short insertIndex, uint charNameOffset, uint limbOffset,
+            uint nameOffset)
+        {
+            AddFunc_14(insertIndex, 0x297890D7, T3Entry.StringOffset(charNameOffset), T3Entry.StringOffset(limbOffset),
+                T3Entry.StringOffset(nameOffset));
+        }
+
+        public void AddFunc_EventExtMotionBuild(short insertIndex, uint motionNameOffset, uint motionFileOffset)
+        {
+            AddFunc_14(insertIndex, 0xD40F2917, T3Entry.StringOffset(motionNameOffset),
+                T3Entry.StringOffset(motionFileOffset));
+        }
+
+        public void AddFunc_35A2(short insertIndex, uint charNameOffset, uint motionNameOffset)
+        {
+            /*
+             * Seems related to setting character model motions.
+             */
+
+            AddFunctionCall(insertIndex, 0x35A2, T3Entry.StringOffset(charNameOffset),
+                T3Entry.StringOffset(motionNameOffset));
         }
     }
 }

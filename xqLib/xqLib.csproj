@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuiltInFunctions.cs" />
+    <Compile Include="StringManager.cs" />
     <Compile Include="XqInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XqManager.cs" />
