@@ -190,7 +190,7 @@ namespace xqLib
                 var entry = t3_list[i];
                 if (entry.Cmd != 0x18) continue;
                 if (!replacing && entry.Value >= offset || replacing && entry.Value > offset)
-                    entry.Value += (uint)count;
+                    entry.Value += (uint) count;
             }
         }
 
@@ -198,7 +198,9 @@ namespace xqLib
         {
             var debug = new List<string>();
             var debug_2 = new List<string>();
+            var debug_3 = new List<string>();
 
+            /*
             debug.Add("T0");
 
             foreach (var item in t0_list)
@@ -248,20 +250,21 @@ namespace xqLib
 
                         debug.Add("Name: " + str);
                     }
+
                 // parse commands in table 2
                 debug.Add("Commands");
                 var cnt = 0;
                 foreach (var t2Entry in t2_list)
                 {
                     //if (t2Entry.FuncId != 0x1B59)
-                     //   continue;
+                    //   continue;
 
                     debug.Add($"[{cnt++}] New Command: {t2Entry.FuncId:X}");
 
                     for (var i = 0; i < t2Entry.T3ArgCount; ++i)
                     {
                         var cmdArgEntry = t3_list[t2Entry.T3EntryId + i];
-                        
+
                         if (t2Entry.FuncId == 0x14 && i == 0)
                         {
                             string opcode;
@@ -283,7 +286,7 @@ namespace xqLib
 
                                     debug_2.Add($"opcode: {opcode}, string: {str}");
                                 }
-                            }*/
+                            }* / todo comment was here
 
 
                             debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X} [{opcode}]");
@@ -301,20 +304,73 @@ namespace xqLib
                             debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X}");
                     }
                 }
+            }*/
+
+            // print emotes
+            var curStr = "";
+            foreach (var t2Entry in t2_list)
+            {
+                if (t2Entry.FuncId != 0x1B59 && t2Entry.FuncId != 0x14)
+                    continue;
+
+                for (var i = 0; i < t2Entry.T3ArgCount; ++i)
+                {
+                    var cmdArgEntry = t3_list[t2Entry.T3EntryId + i];
+
+                    if (t2Entry.FuncId == 0x14)
+                    {
+                        if (i == 0)
+                        {
+                            {
+                                string opcode;
+                                opcode = XqOpcodes.OpCodes.TryGetValue((uint) cmdArgEntry.Value, out opcode)
+                                    ? opcode
+                                    : "N/A";
+
+                                if (opcode != "EventSetMtnByMtnSet")
+                                    break;
+                            }
+                        }
+                        else if (i == 1)
+                        {
+                            debug_3.Add($"{GetStringSJIS(cmdArgEntry.Value)}");
+                        }
+                        else if (i == 2)
+                        {
+                            debug_3.Add($"{GetStringSJIS(cmdArgEntry.Value)}");
+                        }
+                    }
+                    else if (t2Entry.FuncId == 0x1B59)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            curStr = GetStringSJIS(cmdArgEntry.Value);
+                        }
+                        else if (i % 2 == 1)
+                        {
+                            if (cmdArgEntry.Cmd != 0x18)
+                                continue;
+
+                            debug_3.Add($"{curStr}");
+                            debug_3.Add($"{GetStringSJIS(cmdArgEntry.Value)}");
+                        }
+                    }
+                }
             }
 
+            /*
             // print bytes in last table
             var hex = new StringBuilder();
             foreach (var b in t4_data) hex.AppendFormat("{0:X2} ", b);
             debug.Add(hex.ToString());
+            */
 
-            return debug;
+            return debug_3;
         }
 
         public List<string> dumpStrings()
         {
             var strings = new List<string>();
-
             using (var reader = new ImprovedBinaryReader(new MemoryStream(t4_data.ToArray())))
             {
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
@@ -334,6 +390,17 @@ namespace xqLib
             }
 
             return strings;
+        }
+
+        private string GetStringSJIS(uint offset)
+        {
+            using (var text = new ImprovedBinaryReader(new MemoryStream(t4_data.ToArray())))
+            {
+                text.BaseStream.Position = offset;
+
+                var str = text.ReadCStringSJIS();
+                return str;
+            }
         }
     }
 }

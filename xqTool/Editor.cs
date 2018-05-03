@@ -21,6 +21,7 @@ namespace xqTool
 
         private void loadFile()
         {
+            Hide();
             textBox1.Clear();
 
             openFileDialog1.Multiselect = true;
@@ -48,6 +49,7 @@ namespace xqTool
                     textBox1.AppendText(Environment.NewLine);
                 }
 
+                Show();
                 Activate();
             }
 

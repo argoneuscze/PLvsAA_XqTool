@@ -39,10 +39,10 @@ namespace xqLib
             uint chara = 0x1B;
 
             // add strings for book
-            strings.AddString("book_name", "ラビリンシア");
+            strings.AddString("book_name", "ラビリンシア２");
             strings.AddString("book_file", "chr/evt/rabirinsia.xc");
-            strings.AddString("book_motion", "050_マホーネ用本を抱える（封筒あり）");
-            strings.AddString("book_motion2", "052_マホーネ用手紙を差し出す_始");
+            strings.AddString("book_motion", "051_マホーネ用本を抱える（封筒なし）");
+            strings.AddString("book_motion2", "055_マホーネ用本を差し出す");
             strings.AddString("book_limb", "AR03");
             strings.AddString("chara_motion", "マホーネ拡張モーション");
             strings.AddString("chara_motion_file", "chr/c105_ma_book.xc");
@@ -69,9 +69,11 @@ namespace xqLib
             AddFunc_Event3DChrMdl_Build2(8, strings.GetOffset("book_name"), strings.GetOffset("book_file"));
 
             // play thing
+            /*
             AddFunc_Event3DChrMdl_SetMdlMtn(22, strings.GetOffset("book_name"), strings.GetOffset("book_motion2"), 0, 0);
             AddFunc_EventSetMtnByMtnSet(22, chara, strings.GetOffset("chara_emote"), 0);
             AddFunc_WaitFrame(22, 100);
+            */
 
             _xq.Save(file);
         }
