@@ -200,7 +200,7 @@ namespace xqLib
             var debug_2 = new List<string>();
             var debug_3 = new List<string>();
 
-            /*
+
             debug.Add("T0");
 
             foreach (var item in t0_list)
@@ -286,7 +286,7 @@ namespace xqLib
 
                                     debug_2.Add($"opcode: {opcode}, string: {str}");
                                 }
-                            }* / todo comment was here
+                            }*/ // todo comment was here
 
 
                             debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X} [{opcode}]");
@@ -304,7 +304,7 @@ namespace xqLib
                             debug.Add($"ArgCmd: {cmdArgEntry.Cmd:X}, ArgValue: {cmdArgEntry.Value:X}");
                     }
                 }
-            }*/
+            }
 
             // print emotes
             var curStr = "";
@@ -365,7 +365,7 @@ namespace xqLib
             debug.Add(hex.ToString());
             */
 
-            return debug_3;
+            return debug;
         }
 
         public List<string> dumpStrings()
@@ -387,6 +387,51 @@ namespace xqLib
                         reader.BaseStream.Position = text.BaseStream.Position;
                     }
                 }
+            }
+
+            return strings;
+        }
+
+        public List<string> dumpBuiltinFunctions(params string[] funcNames)
+        {
+            var strings = new List<string>();
+
+            var funcNameSet = new HashSet<string>();
+            foreach (var name in funcNames)
+                funcNameSet.Add(name);
+
+            foreach (var t2Entry in t2_list)
+            {
+                if (t2Entry.FuncId != 0x14)
+                    continue;
+
+                var argCount = t2Entry.T3ArgCount;
+                var funcOpcode = XqOpcodes.OpCodes.TryGetValue(t3_list[t2Entry.T3EntryId].Value, out var opcodeString)
+                    ? opcodeString
+                    : "N/A";
+
+                if (funcNames.Length != 0 && !funcNameSet.Contains(opcodeString))
+                    continue;
+
+                var sb = new StringBuilder();
+
+                sb.Append($"[{t3_list[t2Entry.T3EntryId].Value:X}] {opcodeString}(");
+
+                for (var i = 1; i < t2Entry.T3ArgCount; ++i)
+                {
+                    var arg = t3_list[t2Entry.T3EntryId + i];
+
+                    if (i > 1)
+                        sb.Append(", ");
+
+                    var argValue = arg.Cmd == 0x18 ? GetStringSJIS(arg.Value) : arg.Value.ToString("X");
+
+                    sb.Append($"[{arg.Cmd:X}] {argValue}");
+                }
+
+                sb.Append(")");
+
+                strings.Add(sb.ToString());
             }
 
             return strings;

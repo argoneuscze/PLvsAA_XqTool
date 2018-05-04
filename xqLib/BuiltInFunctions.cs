@@ -89,6 +89,24 @@ namespace xqLib
                 });
         }
 
+        public void AddFunc_EventMapFadeRGB(short insertIndex, uint unk1, uint unk2, uint unk3)
+        {
+            AddFunc_14(insertIndex, 0xE0A1080F,
+                new T3Entry
+                {
+                    Cmd = 0x03,
+                    Value = unk1
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = unk2
+                }, new T3Entry
+                {
+                    Cmd = 0x01,
+                    Value = unk3
+                });
+        }
+
         public void AddFunc_EventMapFadeRGB3(short insertIndex, uint unk1, uint length, uint unk3)
         {
             AddFunc_14(insertIndex, 0xFD8D3202,

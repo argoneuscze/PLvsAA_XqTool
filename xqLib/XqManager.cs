@@ -29,6 +29,11 @@ namespace xqLib
             return _xq.dumpStrings();
         }
 
+        public List<string> dumpBuiltinFunctions(params string[] funcNames)
+        {
+            return _xq.dumpBuiltinFunctions(funcNames);
+        }
+
         public void Save(Stream file)
         {
             // initialize string builder
@@ -37,16 +42,6 @@ namespace xqLib
 
             var strings = new StringManager(this, newOffset);
             uint chara = 0x1B;
-
-            // add strings for book
-            strings.AddString("book_name", "ラビリンシア２");
-            strings.AddString("book_file", "chr/evt/rabirinsia.xc");
-            strings.AddString("book_motion", "051_マホーネ用本を抱える（封筒なし）");
-            strings.AddString("book_motion2", "055_マホーネ用本を差し出す");
-            strings.AddString("book_limb", "AR03");
-            strings.AddString("chara_motion", "マホーネ拡張モーション");
-            strings.AddString("chara_motion_file", "chr/c105_ma_book.xc");
-            strings.AddString("chara_emote", "手紙差し出す");
 
             // delete movie and chapter animation
             RemoveFunctionCall(10);
@@ -58,7 +53,28 @@ namespace xqLib
             // spawn char
             AddFunc_Event3DCharaInit(7, chara, 0, 2, 2, 2);
 
-            // attach book
+            // EventMapFadeRGB([3] 3F800000, [1] 0, [1] 0)
+            RemoveFunctionCall(13);
+            RemoveFunctionCall(12);
+            AddFunc_EventMapFadeRGB(12, 0x3F800000, 0, 0);
+
+            RemoveFunctionCall(9);
+            RemoveFunctionCall(8);
+            AddFunc_WaitFrame(8, 100);
+            AddFunc_EventMapFadeRGB3(8, 1, 0, 0);
+
+            /*
+            // add strings for book
+            strings.AddString("book_name", "ラビリンシア２");
+            strings.AddString("book_file", "chr/evt/rabirinsia.xc");
+            strings.AddString("book_motion", "051_マホーネ用本を抱える（封筒なし）");
+            strings.AddString("book_motion2", "055_マホーネ用本を差し出す");
+            strings.AddString("book_limb", "AR03");
+            strings.AddString("chara_motion", "マホーネ拡張モーション");
+            strings.AddString("chara_motion_file", "chr/c105_ma_book.xc");
+            strings.AddString("chara_emote", "本差し出す");
+
+            // attach model
             AddFunc_35A2(8, chara, strings.GetOffset("chara_motion"));
             AddFunc_EventExtMotionBuild(8, strings.GetOffset("chara_motion"),
                 strings.GetOffset("chara_motion_file"));
@@ -69,7 +85,6 @@ namespace xqLib
             AddFunc_Event3DChrMdl_Build2(8, strings.GetOffset("book_name"), strings.GetOffset("book_file"));
 
             // play thing
-            /*
             AddFunc_Event3DChrMdl_SetMdlMtn(22, strings.GetOffset("book_name"), strings.GetOffset("book_motion2"), 0, 0);
             AddFunc_EventSetMtnByMtnSet(22, chara, strings.GetOffset("chara_emote"), 0);
             AddFunc_WaitFrame(22, 100);

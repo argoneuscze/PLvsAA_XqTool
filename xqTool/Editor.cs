@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -19,7 +20,7 @@ namespace xqTool
             saveFileDialog1.OverwritePrompt = true;
         }
 
-        private void loadFile()
+        private void LoadFile()
         {
             Hide();
             textBox1.Clear();
@@ -35,8 +36,10 @@ namespace xqTool
                     var stream = File.OpenRead(filename);
 
                     var xq = XqManager.FromStream(stream);
+
                     var cmds = xq.GetDebugData();
                     //var cmds = xq.dumpStrings();
+                    //var cmds = xq.dumpBuiltinFunctions("EventMapFadeRGB3", "EventMapFadeRGB4", "EventMapFadeRGB");
 
                     data.AddRange(cmds);
 
@@ -72,7 +75,7 @@ namespace xqTool
 
         private void Editor_Load(object sender, EventArgs e)
         {
-            loadFile();
+            LoadFile();
         }
 
         private void saveButton_Click(object sender, EventArgs e)
@@ -86,7 +89,7 @@ namespace xqTool
 
         private void loadButton_Click(object sender, EventArgs e)
         {
-            loadFile();
+            LoadFile();
         }
     }
 }
