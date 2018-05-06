@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace xqLib
@@ -36,6 +38,7 @@ namespace xqLib
 
         public void Save(Stream file)
         {
+            /*
             // initialize string builder
             var strLength = ReplaceTextData(0x1B, "マホーネ");
             var newOffset = 0x1B + strLength;
@@ -62,8 +65,7 @@ namespace xqLib
             RemoveFunctionCall(8);
             AddFunc_WaitFrame(8, 100);
             AddFunc_EventMapFadeRGB3(8, 1, 0, 0);
-
-            /*
+            
             // add strings for book
             strings.AddString("book_name", "ラビリンシア２");
             strings.AddString("book_file", "chr/evt/rabirinsia.xc");
@@ -89,6 +91,9 @@ namespace xqLib
             AddFunc_EventSetMtnByMtnSet(22, chara, strings.GetOffset("chara_emote"), 0);
             AddFunc_WaitFrame(22, 100);
             */
+
+            var funcs = GetBuiltinFuncOffsets("EventCameraShakeL", "EventCameraShake_Ex", "EventFlash");
+            RemoveFunctionCalls(funcs.ToArray());
 
             _xq.Save(file);
         }
@@ -189,6 +194,34 @@ namespace xqLib
 
             // remove from list
             _xq.t2_list.RemoveAt(offset);
+        }
+
+        public void RemoveFunctionCalls(params short[] offsets)
+        {
+            var sorted = new SortedSet<short>(offsets);
+            foreach (var offset in sorted.Reverse())
+                RemoveFunctionCall(offset);
+        }
+
+        public List<short> GetBuiltinFuncOffsets(params string[] funcNames)
+        {
+            var list = new List<short>();
+
+            for (var i = 0; i < _xq.t2_list.Count; ++i)
+            {
+                var func = _xq.t2_list[i];
+
+                if (func.FuncId != 0x14)
+                    continue;
+
+                var funcHash = _xq.t3_list[func.T3EntryId].Value;
+                if (!XqOpcodes.OpCodes.TryGetValue(funcHash, out var funcName)) continue;
+
+                if (funcNames.Any(str => str == funcName))
+                    list.Add((short) i);
+            }
+
+            return list;
         }
     }
 }
